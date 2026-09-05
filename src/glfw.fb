@@ -878,6 +878,27 @@ impl Window {
     pub func set_content_scale_callback(mut self, callback: WindowContentScaleFn) WindowContentScaleFn {
         return set_window_content_scale_callback(self, callback);
     }
+
+    /// @brief Swaps the front and back buffers of the specified window.
+    /// This function swaps the front and back buffers of the specified window when  rendering with OpenGL or OpenGL ES.  If the swap interval is greater than  zero, the GPU driver waits the specified number of screen updates before  swapping the buffers.
+    /// The specified window must have an OpenGL or OpenGL ES context.  Specifying  a window without a context will generate a @ref GLFW_NO_WINDOW_CONTEXT  error.
+    /// This function does not apply to Vulkan.  If you are rendering with Vulkan,  see `vkQueuePresentKHR` instead.
+    ///
+    /// The window whose buffers to swap.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_NO_WINDOW_CONTEXT and @ref GLFW_PLATFORM_ERROR.
+    ///
+    /// @remark __Wayland:__ When the swap interval is greater than zero and the  window is not in view, this function may take a few extra milliseconds to  return.
+    ///
+    /// @remark __EGL:__ The context of the specified window must be current on the  calling thread.
+    /// @thread_safety This function may be called from any thread.
+    ///
+    /// @sa @ref buffer_swap
+    /// @sa @ref glfwSwapInterval
+    ///
+    /// @since Added in version 1.0.  __GLFW 3:__ Added window handle parameter.
+    pub func swap_buffers(mut self) {
+        swap_buffers(self);
+    }
 }
 
 #[repr(C)]

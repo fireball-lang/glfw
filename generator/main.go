@@ -321,7 +321,7 @@ func main() {
 				if p, ok := f.Params[0].Type.(*fb.PointerType); ok {
 					if d, ok := p.Pointee.(*fb.DeclType); ok {
 						if s, ok := d.Decl.(*fb.Struct); ok {
-							if strings.Contains(f.Name, strings.ToLower(s.Name)) {
+							if strings.Contains(f.Name, strings.ToLower(s.Name)) || f.Name == "swap_buffers" {
 								f.MethodName = strings.ReplaceAll(f.Name, strings.ToLower(s.Name), "")
 								f.MethodName = strings.ReplaceAll(f.MethodName, "__", "_")
 								f.MethodName = strings.Trim(f.MethodName, "_")
