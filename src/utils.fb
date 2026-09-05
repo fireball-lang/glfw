@@ -1,0 +1,42 @@
+mod glfw;
+
+import glfw::{Window, Monitor, Cursor, Image, CursorShape, Bool, create_window, create_cursor, create_standard_cursor};
+
+impl Window {
+    pub func new(width: i32, height: i32, title: *u8, monitor: mut *Monitor, share: mut *Window) ?mut &Window {
+        var window = create_window(width, height, title, monitor, share);
+        if (window == null) return Option:[mut &Window]::none();
+
+        return window as mut &Window;
+    }
+}
+
+impl Cursor {
+    pub func new(image: *Image, xhot: i32, yhot: i32) ?mut &Cursor {
+        var cursor = create_cursor(image, xhot, yhot);
+        if (cursor == null) return Option:[mut &Cursor]::none();
+
+        return cursor as mut &Cursor;
+    }
+
+    pub func new_standard(shape: CursorShape) ?mut &Cursor {
+        var cursor = create_standard_cursor(shape);
+        if (cursor == null) return Option:[mut &Cursor]::none();
+
+        return cursor as mut &Cursor;
+    }
+}
+
+impl Bool {
+    pub func from(value: bool) Self {
+        if (value) return Self::True;
+        return Self::False;
+    }
+}
+
+impl Bool : ImplicitAs[bool] {
+    pub func implicit_as(self) bool {
+        if (*self == Self::True) return true;
+        return false;
+    }
+}

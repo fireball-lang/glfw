@@ -1,0 +1,5 @@
+name = "glfw"
+type = "library"
+
+lib-paths = [ "libs/%(OS)-%(ARCH)" ]
+libs = [ "glfw3" ]
