@@ -321,7 +321,36 @@ func main() {
 				if p, ok := f.Params[0].Type.(*fb.PointerType); ok {
 					if d, ok := p.Pointee.(*fb.DeclType); ok {
 						if s, ok := d.Decl.(*fb.Struct); ok {
-							if strings.Contains(f.Name, strings.ToLower(s.Name)) || f.Name == "swap_buffers" {
+							var methods = []string{
+								"get_video_modes",
+								"get_video_mode",
+								"set_gamma",
+								"get_gamma_ramp",
+								"set_gamma_ramp",
+
+								"get_framebuffer_size",
+								"get_input_mode",
+								"set_input_mode",
+								"get_key",
+								"get_mouse_button",
+								"get_cursor_pos",
+								"set_cursor_pos",
+								"set_cursor",
+								"set_key_callback",
+								"set_char_callback",
+								"set_char_mods_callback",
+								"set_mouse_button_callback",
+								"set_cursor_pos_callback",
+								"set_cursor_enter_callback",
+								"set_scroll_callback",
+								"set_drop_callback",
+								"set_clipboard_string",
+								"get_clipboard_string",
+								"make_context_current",
+								"swap_buffers",
+							}
+
+							if strings.Contains(f.Name, strings.ToLower(s.Name)) || slices.Contains(methods, f.Name) {
 								f.MethodName = strings.ReplaceAll(f.Name, strings.ToLower(s.Name), "")
 								f.MethodName = strings.ReplaceAll(f.MethodName, "__", "_")
 								f.MethodName = strings.Trim(f.MethodName, "_")

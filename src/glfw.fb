@@ -151,6 +151,102 @@ impl Monitor {
     pub func get_user_pointer(mut self) mut *void {
         return get_monitor_user_pointer(self);
     }
+
+    /// @brief Returns the available video modes for the specified monitor.
+    /// This function returns an array of all video modes supported by the specified  monitor.  The returned array is sorted in ascending order, first by color  bit depth (the sum of all channel depths), then by resolution area (the  product of width and height), then resolution width and finally by refresh  rate.
+    ///
+    /// The monitor to query.
+    /// Where to store the number of video modes in the returned  array.  This is set to zero if an error occurred.
+    /// @return An array of video modes, or `NULL` if an  [error](@ref error_handling) occurred.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_PLATFORM_ERROR.
+    /// @pointer_lifetime The returned array is allocated and freed by GLFW.  You  should not free it yourself.  It is valid until the specified monitor is  disconnected, this function is called again for that monitor or the library  is terminated.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref monitor_modes
+    /// @sa @ref glfwGetVideoMode
+    ///
+    /// @since Added in version 1.0.  __GLFW 3:__ Changed to return an array of modes for a specific monitor.
+    pub func get_video_modes(mut self, count: mut *i32) *Vidmode {
+        return get_video_modes(self, count);
+    }
+
+    /// @brief Returns the current mode of the specified monitor.
+    /// This function returns the current video mode of the specified monitor.  If  you have created a full screen window for that monitor, the return value  will depend on whether that window is iconified.
+    ///
+    /// The monitor to query.
+    /// @return The current mode of the monitor, or `NULL` if an  [error](@ref error_handling) occurred.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_PLATFORM_ERROR.
+    /// @pointer_lifetime The returned array is allocated and freed by GLFW.  You  should not free it yourself.  It is valid until the specified monitor is  disconnected or the library is terminated.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref monitor_modes
+    /// @sa @ref glfwGetVideoModes
+    ///
+    /// @since Added in version 3.0.  Replaces `glfwGetDesktopMode`.
+    pub func get_video_mode(mut self) *Vidmode {
+        return get_video_mode(self);
+    }
+
+    /// @brief Generates a gamma ramp and sets it for the specified monitor.
+    /// This function generates an appropriately sized gamma ramp from the specified  exponent and then calls @ref glfwSetGammaRamp with it.  The value must be  a finite number greater than zero.
+    /// The software controlled gamma ramp is applied _in addition_ to the hardware  gamma correction, which today is usually an approximation of sRGB gamma.  This means that setting a perfectly linear ramp, or gamma 1.0, will produce  the default (usually sRGB-like) behavior.
+    /// For gamma correct rendering with OpenGL or OpenGL ES, see the @ref GLFW_SRGB_CAPABLE hint.
+    ///
+    /// The monitor whose gamma ramp to set.
+    /// The desired exponent.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_INVALID_VALUE,  @ref GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+    ///
+    /// @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref monitor_gamma
+    ///
+    /// @since Added in version 3.0.
+    pub func set_gamma(mut self, gamma: f32) {
+        set_gamma(self, gamma);
+    }
+
+    /// @brief Returns the current gamma ramp for the specified monitor.
+    /// This function returns the current gamma ramp of the specified monitor.
+    ///
+    /// The monitor to query.
+    /// @return The current gamma ramp, or `NULL` if an  [error](@ref error_handling) occurred.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_PLATFORM_ERROR  and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+    ///
+    /// @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE while  returning `NULL`.
+    /// @pointer_lifetime The returned structure and its arrays are allocated and  freed by GLFW.  You should not free them yourself.  They are valid until the  specified monitor is disconnected, this function is called again for that  monitor or the library is terminated.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref monitor_gamma
+    ///
+    /// @since Added in version 3.0.
+    pub func get_gamma_ramp(mut self) *Gammaramp {
+        return get_gamma_ramp(self);
+    }
+
+    /// @brief Sets the current gamma ramp for the specified monitor.
+    /// This function sets the current gamma ramp for the specified monitor.  The  original gamma ramp for that monitor is saved by GLFW the first time this  function is called and is restored by @ref glfwTerminate.
+    /// The software controlled gamma ramp is applied _in addition_ to the hardware  gamma correction, which today is usually an approximation of sRGB gamma.  This means that setting a perfectly linear ramp, or gamma 1.0, will produce  the default (usually sRGB-like) behavior.
+    /// For gamma correct rendering with OpenGL or OpenGL ES, see the @ref GLFW_SRGB_CAPABLE hint.
+    ///
+    /// The monitor whose gamma ramp to set.
+    /// The gamma ramp to use.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_PLATFORM_ERROR  and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+    ///
+    /// @remark The size of the specified gamma ramp should match the size of the  current ramp for that monitor.
+    ///
+    /// @remark __Win32:__ The gamma ramp size must be 256.
+    ///
+    /// @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
+    /// @pointer_lifetime The specified gamma ramp is copied before this function  returns.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref monitor_gamma
+    ///
+    /// @since Added in version 3.0.
+    pub func set_gamma_ramp(mut self, ramp: *Gammaramp) {
+        set_gamma_ramp(self, ramp);
+    }
 }
 
 #[repr(C)]
@@ -394,6 +490,24 @@ impl Window {
     /// @since Added in version 1.0.  __GLFW 3:__ Added window handle parameter.
     pub func set_size(mut self, width: i32, height: i32) {
         set_window_size(self, width, height);
+    }
+
+    /// @brief Retrieves the size of the framebuffer of the specified window.
+    /// This function retrieves the size, in pixels, of the framebuffer of the  specified window.  If you wish to retrieve the size of the window in screen  coordinates, see @ref glfwGetWindowSize.
+    /// Any or all of the size arguments may be `NULL`.  If an error occurs, all  non-`NULL` size arguments will be set to zero.
+    ///
+    /// The window whose framebuffer to query.
+    /// Where to store the width, in pixels, of the framebuffer,  or `NULL`.
+    /// Where to store the height, in pixels, of the framebuffer,  or `NULL`.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_PLATFORM_ERROR.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref window_fbsize
+    /// @sa @ref glfwSetFramebufferSizeCallback
+    ///
+    /// @since Added in version 3.0.
+    pub func get_framebuffer_size(mut self, width: mut *i32, height: mut *i32) {
+        get_framebuffer_size(self, width, height);
     }
 
     /// @brief Retrieves the size of the frame of the window.
@@ -877,6 +991,354 @@ impl Window {
     /// @since Added in version 3.3.
     pub func set_content_scale_callback(mut self, callback: WindowContentScaleFn) WindowContentScaleFn {
         return set_window_content_scale_callback(self, callback);
+    }
+
+    /// @brief Returns the value of an input option for the specified window.
+    /// This function returns the value of an input option for the specified window.  The mode must be one of @ref GLFW_CURSOR, @ref GLFW_STICKY_KEYS,  @ref GLFW_STICKY_MOUSE_BUTTONS, @ref GLFW_LOCK_KEY_MODS or  @ref GLFW_RAW_MOUSE_MOTION.
+    ///
+    /// The window to query.
+    /// One of `GLFW_CURSOR`, `GLFW_STICKY_KEYS`,  `GLFW_STICKY_MOUSE_BUTTONS`, `GLFW_LOCK_KEY_MODS` or  `GLFW_RAW_MOUSE_MOTION`.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_INVALID_ENUM.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref glfwSetInputMode
+    ///
+    /// @since Added in version 3.0.
+    pub func get_input_mode(mut self, mode: InputMode) i32 {
+        return get_input_mode(self, mode);
+    }
+
+    /// @brief Sets an input option for the specified window.
+    /// This function sets an input mode option for the specified window.  The mode  must be one of @ref GLFW_CURSOR, @ref GLFW_STICKY_KEYS,  @ref GLFW_STICKY_MOUSE_BUTTONS, @ref GLFW_LOCK_KEY_MODS  @ref GLFW_RAW_MOUSE_MOTION, or @ref GLFW_UNLIMITED_MOUSE_BUTTONS.
+    /// If the mode is `GLFW_CURSOR`, the value must be one of the following cursor  modes:  - `GLFW_CURSOR_NORMAL` makes the cursor visible and behaving normally.  - `GLFW_CURSOR_HIDDEN` makes the cursor invisible when it is over the    content area of the window but does not restrict the cursor from leaving.  - `GLFW_CURSOR_DISABLED` hides and grabs the cursor, providing virtual    and unlimited cursor movement.  This is useful for implementing for    example 3D camera controls.  - `GLFW_CURSOR_CAPTURED` makes the cursor visible and confines it to the    content area of the window.
+    /// If the mode is `GLFW_STICKY_KEYS`, the value must be either `GLFW_TRUE` to  enable sticky keys, or `GLFW_FALSE` to disable it.  If sticky keys are  enabled, a key press will ensure that @ref glfwGetKey returns `GLFW_PRESS`  the next time it is called even if the key had been released before the  call.  This is useful when you are only interested in whether keys have been  pressed but not when or in which order.
+    /// If the mode is `GLFW_STICKY_MOUSE_BUTTONS`, the value must be either  `GLFW_TRUE` to enable sticky mouse buttons, or `GLFW_FALSE` to disable it.  If sticky mouse buttons are enabled, a mouse button press will ensure that  @ref glfwGetMouseButton returns `GLFW_PRESS` the next time it is called even  if the mouse button had been released before the call.  This is useful when  you are only interested in whether mouse buttons have been pressed but not  when or in which order.
+    /// If the mode is `GLFW_LOCK_KEY_MODS`, the value must be either `GLFW_TRUE` to  enable lock key modifier bits, or `GLFW_FALSE` to disable them.  If enabled,  callbacks that receive modifier bits will also have the @ref GLFW_MOD_CAPS_LOCK bit set when the event was generated with Caps Lock on,  and the @ref GLFW_MOD_NUM_LOCK bit when Num Lock was on.
+    /// If the mode is `GLFW_RAW_MOUSE_MOTION`, the value must be either `GLFW_TRUE`  to enable raw (unscaled and unaccelerated) mouse motion when the cursor is  disabled, or `GLFW_FALSE` to disable it.  If raw motion is not supported,  attempting to set this will emit @ref GLFW_FEATURE_UNAVAILABLE.  Call @ref glfwRawMouseMotionSupported to check for support.
+    /// If the mode is `GLFW_UNLIMITED_MOUSE_BUTTONS`, the value must be either  `GLFW_TRUE` to disable the mouse button limit when calling the mouse button  callback, or `GLFW_FALSE` to limit the mouse buttons sent to the callback  to the mouse button token values up to `GLFW_MOUSE_BUTTON_LAST`.
+    ///
+    /// The window whose input mode to set.
+    /// One of `GLFW_CURSOR`, `GLFW_STICKY_KEYS`,  `GLFW_STICKY_MOUSE_BUTTONS`, `GLFW_LOCK_KEY_MODS` or  `GLFW_RAW_MOUSE_MOTION`.
+    /// The new value of the specified input mode.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_INVALID_ENUM, @ref GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see above).
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref glfwGetInputMode
+    ///
+    /// @since Added in version 3.0.  Replaces `glfwEnable` and `glfwDisable`.
+    pub func set_input_mode(mut self, mode: InputMode, value: i32) {
+        set_input_mode(self, mode, value);
+    }
+
+    /// @brief Returns the last reported state of a keyboard key for the specified  window.
+    /// This function returns the last state reported for the specified key to the  specified window.  The returned state is one of `GLFW_PRESS` or  `GLFW_RELEASE`.  The action `GLFW_REPEAT` is only reported to the key callback.
+    /// If the @ref GLFW_STICKY_KEYS input mode is enabled, this function returns  `GLFW_PRESS` the first time you call it for a key that was pressed, even if  that key has already been released.
+    /// The key functions deal with physical keys, with [key tokens](@ref keys)  named after their use on the standard US keyboard layout.  If you want to  input text, use the Unicode character callback instead.
+    /// The [modifier key bit masks](@ref mods) are not key tokens and cannot be  used with this function.
+    /// __Do not use this function__ to implement [text input](@ref input_char).
+    ///
+    /// The desired window.
+    /// The desired [keyboard key](@ref keys).  `GLFW_KEY_UNKNOWN` is  not a valid key for this function.
+    /// @return One of `GLFW_PRESS` or `GLFW_RELEASE`.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_INVALID_ENUM.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref input_key
+    ///
+    /// @since Added in version 1.0.  __GLFW 3:__ Added window handle parameter.
+    pub func get_key(mut self, key: Key) i32 {
+        return get_key(self, key);
+    }
+
+    /// @brief Returns the last reported state of a mouse button for the specified  window.
+    /// This function returns the last state reported for the specified mouse button  to the specified window.  The returned state is one of `GLFW_PRESS` or  `GLFW_RELEASE`.
+    /// If the @ref GLFW_STICKY_MOUSE_BUTTONS input mode is enabled, this function  returns `GLFW_PRESS` the first time you call it for a mouse button that was  pressed, even if that mouse button has already been released.
+    /// The @ref GLFW_UNLIMITED_MOUSE_BUTTONS input mode does not effect the  limit on buttons which can be polled with this function.
+    ///
+    /// The desired window.
+    /// The desired [mouse button token](@ref buttons).
+    /// @return One of `GLFW_PRESS` or `GLFW_RELEASE`.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_INVALID_ENUM.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref input_mouse_button
+    ///
+    /// @since Added in version 1.0.  __GLFW 3:__ Added window handle parameter.
+    pub func get_mouse_button(mut self, button: MouseButton) i32 {
+        return get_mouse_button(self, button);
+    }
+
+    /// @brief Retrieves the position of the cursor relative to the content area of  the window.
+    /// This function returns the position of the cursor, in screen coordinates,  relative to the upper-left corner of the content area of the specified  window.
+    /// If the cursor is disabled (with `GLFW_CURSOR_DISABLED`) then the cursor  position is unbounded and limited only by the minimum and maximum values of  a `double`.
+    /// The coordinate can be converted to their integer equivalents with the  `floor` function.  Casting directly to an integer type works for positive  coordinates, but fails for negative ones.
+    /// Any or all of the position arguments may be `NULL`.  If an error occurs, all  non-`NULL` position arguments will be set to zero.
+    ///
+    /// The desired window.
+    /// Where to store the cursor x-coordinate, relative to the  left edge of the content area, or `NULL`.
+    /// Where to store the cursor y-coordinate, relative to the to  top edge of the content area, or `NULL`.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_PLATFORM_ERROR.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref cursor_pos
+    /// @sa @ref glfwSetCursorPos
+    ///
+    /// @since Added in version 3.0.  Replaces `glfwGetMousePos`.
+    pub func get_cursor_pos(mut self, xpos: mut *f64, ypos: mut *f64) {
+        get_cursor_pos(self, xpos, ypos);
+    }
+
+    /// @brief Sets the position of the cursor, relative to the content area of the  window.
+    /// This function sets the position, in screen coordinates, of the cursor  relative to the upper-left corner of the content area of the specified  window.  The window must have input focus.  If the window does not have  input focus when this function is called, it fails silently.
+    /// __Do not use this function__ to implement things like camera controls.  GLFW  already provides the `GLFW_CURSOR_DISABLED` cursor mode that hides the  cursor, transparently re-centers it and provides unconstrained cursor  motion.  See @ref glfwSetInputMode for more information.
+    /// If the cursor mode is `GLFW_CURSOR_DISABLED` then the cursor position is  unconstrained and limited only by the minimum and maximum values of  a `double`.
+    ///
+    /// The desired window.
+    /// The desired x-coordinate, relative to the left edge of the  content area.
+    /// The desired y-coordinate, relative to the top edge of the  content area.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+    ///
+    /// @remark __Wayland:__ This function will only work when the cursor mode is  `GLFW_CURSOR_DISABLED`, otherwise it will emit @ref GLFW_FEATURE_UNAVAILABLE.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref cursor_pos
+    /// @sa @ref glfwGetCursorPos
+    ///
+    /// @since Added in version 3.0.  Replaces `glfwSetMousePos`.
+    pub func set_cursor_pos(mut self, xpos: f64, ypos: f64) {
+        set_cursor_pos(self, xpos, ypos);
+    }
+
+    /// @brief Sets the cursor for the window.
+    /// This function sets the cursor image to be used when the cursor is over the  content area of the specified window.  The set cursor will only be visible  when the [cursor mode](@ref cursor_mode) of the window is  `GLFW_CURSOR_NORMAL`.
+    /// On some platforms, the set cursor may not be visible unless the window also  has input focus.
+    ///
+    /// The window to set the cursor for.
+    /// The cursor to set, or `NULL` to switch back to the default  arrow cursor.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_PLATFORM_ERROR.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref cursor_object
+    ///
+    /// @since Added in version 3.1.
+    pub func set_cursor(mut self, cursor: mut *Cursor) {
+        set_cursor(self, cursor);
+    }
+
+    /// @brief Sets the key callback.
+    /// This function sets the key callback of the specified window, which is called  when a key is pressed, repeated or released.
+    /// The key functions deal with physical keys, with layout independent  [key tokens](@ref keys) named after their values in the standard US keyboard  layout.  If you want to input text, use the  [character callback](@ref glfwSetCharCallback) instead.
+    /// When a window loses input focus, it will generate synthetic key release  events for all pressed keys with associated key tokens.  You can tell these  events from user-generated events by the fact that the synthetic ones are  generated after the focus loss event has been processed, i.e. after the  [window focus callback](@ref glfwSetWindowFocusCallback) has been called.
+    /// The scancode of a key is specific to that platform or sometimes even to that  machine.  Scancodes are intended to allow users to bind keys that don't have  a GLFW key token.  Such keys have `key` set to `GLFW_KEY_UNKNOWN`, their  state is not saved and so it cannot be queried with @ref glfwGetKey.
+    /// Sometimes GLFW needs to generate synthetic key events, in which case the  scancode may be zero.
+    ///
+    /// The window whose callback to set.
+    /// The new key callback, or `NULL` to remove the currently  set callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or the  library had not been [initialized](@ref intro_init).
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWkeyfun).
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref input_key
+    ///
+    /// @since Added in version 1.0.  __GLFW 3:__ Added window handle parameter and return value.
+    pub func set_key_callback(mut self, callback: KeyFn) KeyFn {
+        return set_key_callback(self, callback);
+    }
+
+    /// @brief Sets the Unicode character callback.
+    /// This function sets the character callback of the specified window, which is  called when a Unicode character is input.
+    /// The character callback is intended for Unicode text input.  As it deals with  characters, it is keyboard layout dependent, whereas the  [key callback](@ref glfwSetKeyCallback) is not.  Characters do not map 1:1  to physical keys, as a key may produce zero, one or more characters.  If you  want to know whether a specific physical key was pressed or released, see  the key callback instead.
+    /// The character callback behaves as system text input normally does and will  not be called if modifier keys are held down that would prevent normal text  input on that platform, for example a Super (Command) key on macOS or Alt key  on Windows.
+    ///
+    /// The window whose callback to set.
+    /// The new callback, or `NULL` to remove the currently set  callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or the  library had not been [initialized](@ref intro_init).
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWcharfun).
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref input_char
+    ///
+    /// @since Added in version 2.4.  __GLFW 3:__ Added window handle parameter and return value.
+    pub func set_char_callback(mut self, callback: CharFn) CharFn {
+        return set_char_callback(self, callback);
+    }
+
+    /// @brief Sets the Unicode character with modifiers callback.
+    /// This function sets the character with modifiers callback of the specified  window, which is called when a Unicode character is input regardless of what  modifier keys are used.
+    /// The character with modifiers callback is intended for implementing custom  Unicode character input.  For regular Unicode text input, see the  [character callback](@ref glfwSetCharCallback).  Like the character  callback, the character with modifiers callback deals with characters and is  keyboard layout dependent.  Characters do not map 1:1 to physical keys, as  a key may produce zero, one or more characters.  If you want to know whether  a specific physical key was pressed or released, see the  [key callback](@ref glfwSetKeyCallback) instead.
+    ///
+    /// The window whose callback to set.
+    /// The new callback, or `NULL` to remove the currently set  callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or an  [error](@ref error_handling) occurred.
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWcharmodsfun).
+    ///
+    /// @deprecated Scheduled for removal in version 4.0.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref input_char
+    ///
+    /// @since Added in version 3.1.
+    pub func set_char_mods_callback(mut self, callback: CharModsFn) CharModsFn {
+        return set_char_mods_callback(self, callback);
+    }
+
+    /// @brief Sets the mouse button callback.
+    /// This function sets the mouse button callback of the specified window, which  is called when a mouse button is pressed or released.
+    /// When a window loses input focus, it will generate synthetic mouse button  release events for all pressed mouse buttons with associated button tokens.  You can tell these events from user-generated events by the fact that the  synthetic ones are generated after the focus loss event has been processed,  i.e. after the [window focus callback](@ref glfwSetWindowFocusCallback) has  been called.
+    /// The reported `button` value can be higher than `GLFW_MOUSE_BUTTON_LAST` if  the button does not have an associated [button token](@ref buttons) and the  @ref GLFW_UNLIMITED_MOUSE_BUTTONS input mode is set.
+    ///
+    /// The window whose callback to set.
+    /// The new callback, or `NULL` to remove the currently set  callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or the  library had not been [initialized](@ref intro_init).
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWmousebuttonfun).
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref input_mouse_button
+    ///
+    /// @since Added in version 1.0.  __GLFW 3:__ Added window handle parameter and return value.
+    pub func set_mouse_button_callback(mut self, callback: MouseButtonFn) MouseButtonFn {
+        return set_mouse_button_callback(self, callback);
+    }
+
+    /// @brief Sets the cursor position callback.
+    /// This function sets the cursor position callback of the specified window,  which is called when the cursor is moved.  The callback is provided with the  position, in screen coordinates, relative to the upper-left corner of the  content area of the window.
+    ///
+    /// The window whose callback to set.
+    /// The new callback, or `NULL` to remove the currently set  callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or the  library had not been [initialized](@ref intro_init).
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWcursorposfun).
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref cursor_pos
+    ///
+    /// @since Added in version 3.0.  Replaces `glfwSetMousePosCallback`.
+    pub func set_cursor_pos_callback(mut self, callback: CursorPosFn) CursorPosFn {
+        return set_cursor_pos_callback(self, callback);
+    }
+
+    /// @brief Sets the cursor enter/leave callback.
+    /// This function sets the cursor boundary crossing callback of the specified  window, which is called when the cursor enters or leaves the content area of  the window.
+    ///
+    /// The window whose callback to set.
+    /// The new callback, or `NULL` to remove the currently set  callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or the  library had not been [initialized](@ref intro_init).
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWcursorenterfun).
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref cursor_enter
+    ///
+    /// @since Added in version 3.0.
+    pub func set_cursor_enter_callback(mut self, callback: CursorEnterFn) CursorEnterFn {
+        return set_cursor_enter_callback(self, callback);
+    }
+
+    /// @brief Sets the scroll callback.
+    /// This function sets the scroll callback of the specified window, which is  called when a scrolling device is used, such as a mouse wheel or scrolling  area of a touchpad.
+    /// The scroll callback receives all scrolling input, like that from a mouse  wheel or a touchpad scrolling area.
+    ///
+    /// The window whose callback to set.
+    /// The new scroll callback, or `NULL` to remove the  currently set callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or the  library had not been [initialized](@ref intro_init).
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWscrollfun).
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref scrolling
+    ///
+    /// @since Added in version 3.0.  Replaces `glfwSetMouseWheelCallback`.
+    pub func set_scroll_callback(mut self, callback: ScrollFn) ScrollFn {
+        return set_scroll_callback(self, callback);
+    }
+
+    /// @brief Sets the path drop callback.
+    /// This function sets the path drop callback of the specified window, which is  called when one or more dragged paths are dropped on the window.
+    /// Because the path array and its strings may have been generated specifically  for that event, they are not guaranteed to be valid after the callback has  returned.  If you wish to use them after the callback returns, you need to  make a deep copy.
+    ///
+    /// The window whose callback to set.
+    /// The new file drop callback, or `NULL` to remove the  currently set callback.
+    /// @return The previously set callback, or `NULL` if no callback was set or the  library had not been [initialized](@ref intro_init).
+    /// @callback_signature
+    /// For more information about the callback parameters, see the  [function pointer type](@ref GLFWdropfun).
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref path_drop
+    ///
+    /// @since Added in version 3.1.
+    pub func set_drop_callback(mut self, callback: DropFn) DropFn {
+        return set_drop_callback(self, callback);
+    }
+
+    /// @brief Sets the clipboard to the specified string.
+    /// This function sets the system clipboard to the specified, UTF-8 encoded  string.
+    ///
+    /// Deprecated.  Any valid window or `NULL`.
+    /// A UTF-8 encoded string.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_PLATFORM_ERROR.
+    ///
+    /// @remark __Win32:__ The clipboard on Windows has a single global lock for reading and  writing.  GLFW tries to acquire it a few times, which is almost always enough.  If it  cannot acquire the lock then this function emits @ref GLFW_PLATFORM_ERROR and returns.  It is safe to try this multiple times.
+    /// @pointer_lifetime The specified string is copied before this function  returns.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref clipboard
+    /// @sa @ref glfwGetClipboardString
+    ///
+    /// @since Added in version 3.0.
+    pub func set_clipboard_string(mut self, string: *u8) {
+        set_clipboard_string(self, string);
+    }
+
+    /// @brief Returns the contents of the clipboard as a string.
+    /// This function returns the contents of the system clipboard, if it contains  or is convertible to a UTF-8 encoded string.  If the clipboard is empty or  if its contents cannot be converted, `NULL` is returned and a @ref GLFW_FORMAT_UNAVAILABLE error is generated.
+    ///
+    /// Deprecated.  Any valid window or `NULL`.
+    /// @return The contents of the clipboard as a UTF-8 encoded string, or `NULL`  if an [error](@ref error_handling) occurred.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_FORMAT_UNAVAILABLE and @ref GLFW_PLATFORM_ERROR.
+    ///
+    /// @remark __Win32:__ The clipboard on Windows has a single global lock for reading and  writing.  GLFW tries to acquire it a few times, which is almost always enough.  If it  cannot acquire the lock then this function emits @ref GLFW_PLATFORM_ERROR and returns.  It is safe to try this multiple times.
+    /// @pointer_lifetime The returned string is allocated and freed by GLFW.  You  should not free it yourself.  It is valid until the next call to @ref glfwGetClipboardString or @ref glfwSetClipboardString, or until the library  is terminated.
+    /// @thread_safety This function must only be called from the main thread.
+    ///
+    /// @sa @ref clipboard
+    /// @sa @ref glfwSetClipboardString
+    ///
+    /// @since Added in version 3.0.
+    pub func get_clipboard_string(mut self) *u8 {
+        return get_clipboard_string(self);
+    }
+
+    /// @brief Makes the context of the specified window current for the calling  thread.
+    /// This function makes the OpenGL or OpenGL ES context of the specified window  current on the calling thread.  It can also detach the current context from  the calling thread without making a new one current by passing in `NULL`.
+    /// A context must only be made current on a single thread at a time and each  thread can have only a single current context at a time.  Making a context  current detaches any previously current context on the calling thread.
+    /// When moving a context between threads, you must detach it (make it  non-current) on the old thread before making it current on the new one.
+    /// By default, making a context non-current implicitly forces a pipeline flush.  On machines that support `GL_KHR_context_flush_control`, you can control  whether a context performs this flush by setting the  [GLFW_CONTEXT_RELEASE_BEHAVIOR](@ref GLFW_CONTEXT_RELEASE_BEHAVIOR_hint)  hint.
+    /// The specified window must have an OpenGL or OpenGL ES context.  Specifying  a window without a context will generate a @ref GLFW_NO_WINDOW_CONTEXT  error.
+    ///
+    /// The window whose context to make current, or `NULL` to  detach the current context.
+    ///
+    /// @remarks If the previously current context was created via a different  context creation API than the one passed to this function, GLFW will still  detach the previous one from its API before making the new one current.
+    /// @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_NO_WINDOW_CONTEXT and @ref GLFW_PLATFORM_ERROR.
+    /// @thread_safety This function may be called from any thread.
+    ///
+    /// @sa @ref context_current
+    /// @sa @ref glfwGetCurrentContext
+    ///
+    /// @since Added in version 3.0.
+    pub func make_context_current(mut self) {
+        make_context_current(self);
     }
 
     /// @brief Swaps the front and back buffers of the specified window.
