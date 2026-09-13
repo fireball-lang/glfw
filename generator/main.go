@@ -1,19 +1,21 @@
 package main
 
 import (
-	"generator/c"
-	"generator/fb"
 	"os"
 	"slices"
 	"strings"
+
+	"github.com/fireball-lang/bindgen"
+	"github.com/fireball-lang/bindgen/c"
+	"github.com/fireball-lang/bindgen/fb"
 )
 
 func main() {
-	err := Generate(BindGenOpts{
+	err := bindgen.Generate(bindgen.Options{
 		Inputs:  []string{"headers/glfw3.h"},
 		Defines: []string{"GLFW_INCLUDE_VULKAN"},
 
-		Outputs: []File{
+		Outputs: []bindgen.File{
 			{Path: "../src/glfw.fb", Module: "glfw"},
 		},
 
@@ -40,7 +42,7 @@ func main() {
 			"Gamepadstate": "GamepadState",
 		},
 
-		MacroEnums: []MacroEnum{
+		MacroEnums: []bindgen.MacroEnum{
 			{Name: "Hat", Bitfield: true, Prefix: "GLFW_HAT_"},
 			{Name: "Key", Type: "i32", Prefix: "GLFW_KEY_"},
 			{Name: "Mod", Bitfield: true, Prefix: "GLFW_MOD_"},
