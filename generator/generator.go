@@ -12,7 +12,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 type BindGenOpts struct {
@@ -238,7 +237,7 @@ func (g *generator) CreateDecls() {
 		case "FunctionDecl":
 			decl = &fb.Func{
 				Documentation: node.Documentation(),
-				Name:          camelToSnakeCase(g.MapName(node.Name)),
+				Name:          CamelToSnakeCase(g.MapName(node.Name)),
 				LinkName:      node.Name,
 				ReceiverIndex: -1,
 			}
@@ -293,7 +292,7 @@ func (g *generator) ResolveDecls() {
 
 						decl.Cases = append(decl.Cases, &fb.Case{
 							Documentation: node.Documentation(),
-							Name:          snakeToPascalCase(enum.trim(node.Name)),
+							Name:          SnakeToPascalCase(enum.trim(node.Name)),
 							Value:         strings.TrimRight(value, "uUlL"),
 						})
 
@@ -310,7 +309,7 @@ func (g *generator) ResolveDecls() {
 
 					decl.Cases = append(decl.Cases, &fb.Case{
 						Documentation: node.Documentation(),
-						Name:          snakeToPascalCase(node.Name),
+						Name:          SnakeToPascalCase(node.Name),
 						Value:         node.EnumValue(),
 					})
 				}
@@ -370,7 +369,7 @@ func (g *generator) ResolveDecls() {
 			for _, node := range node.Inner {
 				if node.Kind == "ParmVarDecl" {
 					decl.Params = append(decl.Params, &fb.Param{
-						Name: camelToSnakeCase(node.Name),
+						Name: CamelToSnakeCase(node.Name),
 						Type: g.ParseType(node.Type.QualType),
 					})
 				}
@@ -617,8 +616,8 @@ func (g *generator) SetupDefaults() {
 	// Order
 	if g.opts.Order == nil {
 		g.opts.Order = func(a, b fb.Decl) int {
-			aOrder := getDeclOrder(a)
-			bOrder := getDeclOrder(b)
+			aOrder := GetDeclOrder(a)
+			bOrder := GetDeclOrder(b)
 
 			return cmp.Compare(aOrder, bOrder)
 		}
@@ -658,22 +657,6 @@ func (g *generator) ParseType(str string) fb.Type {
 	return typ
 }
 
-func getDeclOrder(decl fb.Decl) int {
-	switch decl.(type) {
-	case *fb.Alias:
-		return 1
-	case *fb.Enum:
-		return 2
-	case *fb.Struct:
-		return 3
-	case *fb.Func:
-		return 4
-
-	default:
-		panic("getDeclOrder() - Invalid declaration")
-	}
-}
-
 func (m MacroEnum) contains(name string) bool {
 	if len(m.Exact) > 0 {
 		return slices.Contains(m.Exact, name)
@@ -698,52 +681,4 @@ func (m MacroEnum) trim(name string) string {
 	}
 
 	return name
-}
-
-func camelToSnakeCase(str string) string {
-	var sb strings.Builder
-
-	lastUpper := false
-	for i, ch := range str {
-		if unicode.IsDigit(ch) {
-			sb.WriteRune(ch)
-			lastUpper = true
-		} else if unicode.IsUpper(ch) {
-			if !lastUpper && i > 0 {
-				sb.WriteRune('_')
-			}
-			sb.WriteRune(unicode.ToLower(ch))
-			lastUpper = true
-		} else {
-			sb.WriteRune(ch)
-			lastUpper = false
-		}
-	}
-
-	return sb.String()
-}
-
-func snakeToPascalCase(str string) string {
-	var sb strings.Builder
-	nextUpper := true
-
-	for _, ch := range str {
-		if ch == '_' {
-			nextUpper = true
-			continue
-		}
-
-		if nextUpper {
-			sb.WriteRune(unicode.ToUpper(ch))
-			nextUpper = false
-		} else {
-			sb.WriteRune(unicode.ToLower(ch))
-		}
-
-		if unicode.IsDigit(ch) {
-			nextUpper = true
-		}
-	}
-
-	return sb.String()
 }
