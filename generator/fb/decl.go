@@ -40,61 +40,6 @@ func (a *Alias) Write(w io.Writer) {
 	_, _ = fmt.Fprint(w, ";\n")
 }
 
-// Struct
-
-type Field struct {
-	Documentation string
-
-	Name string
-	Type Type
-}
-
-type Struct struct {
-	OutputIndex int
-
-	Documentation string
-
-	Name   string
-	Fields []*Field
-
-	Union bool
-}
-
-func (s *Struct) OutputIndex_() int {
-	return s.OutputIndex
-}
-
-func (s *Struct) Name_() string {
-	return s.Name
-}
-
-func (s *Struct) Write(w io.Writer) {
-	WriteDocumentation(w, s.Documentation, "")
-
-	if s.Union {
-		_, _ = fmt.Fprint(w, "#[repr(Union)]\n")
-	} else {
-		_, _ = fmt.Fprint(w, "#[repr(C)]\n")
-	}
-
-	if len(s.Fields) == 0 {
-		_, _ = fmt.Fprintf(w, "pub struct %s {}\n", s.Name)
-		return
-	}
-
-	_, _ = fmt.Fprintf(w, "pub struct %s {\n", s.Name)
-
-	for _, field := range s.Fields {
-		WriteDocumentation(w, field.Documentation, "    ")
-
-		_, _ = fmt.Fprintf(w, "    pub %s: ", field.Name)
-		field.Type.Write(w)
-		_, _ = fmt.Fprint(w, ",\n")
-	}
-
-	_, _ = fmt.Fprint(w, "}\n")
-}
-
 // Enum
 
 type Case struct {
@@ -190,6 +135,61 @@ impl %[1]s : BitAnd[%[1]s] {
 }
 `, e.Name, underlying.String())
 	}
+}
+
+// Struct
+
+type Field struct {
+	Documentation string
+
+	Name string
+	Type Type
+}
+
+type Struct struct {
+	OutputIndex int
+
+	Documentation string
+
+	Name   string
+	Fields []*Field
+
+	Union bool
+}
+
+func (s *Struct) OutputIndex_() int {
+	return s.OutputIndex
+}
+
+func (s *Struct) Name_() string {
+	return s.Name
+}
+
+func (s *Struct) Write(w io.Writer) {
+	WriteDocumentation(w, s.Documentation, "")
+
+	if s.Union {
+		_, _ = fmt.Fprint(w, "#[repr(Union)]\n")
+	} else {
+		_, _ = fmt.Fprint(w, "#[repr(C)]\n")
+	}
+
+	if len(s.Fields) == 0 {
+		_, _ = fmt.Fprintf(w, "pub struct %s {}\n", s.Name)
+		return
+	}
+
+	_, _ = fmt.Fprintf(w, "pub struct %s {\n", s.Name)
+
+	for _, field := range s.Fields {
+		WriteDocumentation(w, field.Documentation, "    ")
+
+		_, _ = fmt.Fprintf(w, "    pub %s: ", field.Name)
+		field.Type.Write(w)
+		_, _ = fmt.Fprint(w, ",\n")
+	}
+
+	_, _ = fmt.Fprint(w, "}\n")
 }
 
 // Func
