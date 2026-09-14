@@ -191,6 +191,9 @@ func main() {
 			}
 
 			switch a.Name {
+			case "GlProc", "VkProc":
+				a.Type = &fb.PointerType{Pointee: &fb.SimpleType{Text: "void"}}
+
 			case "KeyFn":
 				typ := a.Type.(*fb.FuncType)
 				typ.Params[1].Type = &fb.SimpleType{Text: "Key"}

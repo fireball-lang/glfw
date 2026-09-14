@@ -11,7 +11,7 @@ mod glfw;
 /// @sa @ref glfwGetProcAddress
 ///
 /// @since Added in version 3.0.
-pub type GlProc = func();
+pub type GlProc = *void;
 
 /// @brief Vulkan API function pointer type.
 /// Generic function pointer used for returning Vulkan API function pointers  without forcing a cast from a regular pointer.
@@ -20,7 +20,7 @@ pub type GlProc = func();
 /// @sa @ref glfwGetInstanceProcAddress
 ///
 /// @since Added in version 3.2.
-pub type VkProc = func();
+pub type VkProc = *void;
 
 /// @brief The function pointer type for memory allocation callbacks.
 /// This is the function pointer type for memory allocation callbacks.  A memory  allocation callback function has the following signature:
