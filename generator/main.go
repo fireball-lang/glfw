@@ -169,7 +169,7 @@ func main() {
 
 			case "PFN_vkGetInstanceProcAddr":
 				return &fb.FuncType{
-					Params: []fb.Param{
+					Params: []*fb.Param{
 						{Type: &fb.PointerType{Mutable: true, Pointee: &fb.SimpleType{Text: "void"}}},
 						{Type: &fb.PointerType{Pointee: &fb.SimpleType{Text: "u8"}}},
 					},
